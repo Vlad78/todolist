@@ -16,6 +16,14 @@ import Grid from "@mui/material/Unstable_Grid2";
 
 import { AddItemForm } from "./AddItemForm";
 import { MenuButton } from "./MenuButton";
+import {
+  addTaskAC,
+  addTodolistAC,
+  changeTaskStatusAC,
+  changeTaskTitleAC,
+  removeTaskAC,
+  tasksReducer,
+} from "./model/tasks-reducer";
 import { todolistsReducer } from "./model/todolists-reducer";
 import { Todolist } from "./Todolist";
 
@@ -43,7 +51,7 @@ function App() {
   let todolistID1 = v1();
   let todolistID2 = v1();
 
-  let [tasks, setTasks] = useState<TasksStateType>({
+  const [tasks, dispatchTasks] = useReducer(tasksReducer, {
     [todolistID1]: [
       { id: v1(), title: "HTML&CSS", isDone: true },
       { id: v1(), title: "JS", isDone: true },
@@ -72,31 +80,15 @@ function App() {
   });
 
   const removeTask = (taskId: string, todolistId: string) => {
-    const newTodolistTasks = {
-      ...tasks,
-      [todolistId]: tasks[todolistId].filter((t) => t.id !== taskId),
-    };
-    setTasks(newTodolistTasks);
+    dispatchTasks(removeTaskAC(taskId, todolistId));
   };
 
   const addTask = (title: string, todolistId: string) => {
-    const newTask = {
-      id: v1(),
-      title: title,
-      isDone: false,
-    };
-    const newTodolistTasks = { ...tasks, [todolistId]: [newTask, ...tasks[todolistId]] };
-    setTasks(newTodolistTasks);
+    dispatchTasks(addTaskAC(title, todolistId));
   };
 
   const changeTaskStatus = (taskId: string, taskStatus: boolean, todolistId: string) => {
-    const newTodolistTasks = {
-      ...tasks,
-      [todolistId]: tasks[todolistId].map((t) =>
-        t.id == taskId ? { ...t, isDone: taskStatus } : t
-      ),
-    };
-    setTasks(newTodolistTasks);
+    dispatchTasks(changeTaskStatusAC(taskId, taskStatus, todolistId));
   };
 
   const changeFilter = (filter: FilterValuesType, todolistId: string) => {
@@ -106,21 +98,16 @@ function App() {
   const removeTodolist = (todolistId: string) => {
     dispatchTodolists({ type: "REMOVE-TODOLIST", payload: { todolistId } });
     delete tasks[todolistId];
-    setTasks({ ...tasks });
   };
 
   const addTodolist = (title: string) => {
     const todolistId = v1();
     dispatchTodolists({ type: "ADD-TODOLIST", payload: { title, todolistId } });
-    setTasks({ ...tasks, [todolistId]: [] });
+    dispatchTasks(addTodolistAC(title, todolistId));
   };
 
   const updateTask = (todolistId: string, taskId: string, title: string) => {
-    const newTodolistTasks = {
-      ...tasks,
-      [todolistId]: tasks[todolistId].map((t) => (t.id === taskId ? { ...t, title } : t)),
-    };
-    setTasks(newTodolistTasks);
+    dispatchTasks(changeTaskTitleAC(taskId, title, todolistId));
   };
 
   const updateTodolist = (todolistId: string, title: string) => {
