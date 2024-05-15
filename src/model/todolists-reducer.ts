@@ -1,4 +1,4 @@
-import { FilterValuesType, TodolistType } from "../App";
+import { FilterValuesType, TodolistType } from "../AppRedux";
 
 type ActionValue =
   | ReturnType<typeof removeTodolistAC>
@@ -45,7 +45,12 @@ export const changeFilterAC = (filter: FilterValuesType, todolistId: string) => 
   } as const;
 };
 
-export const todolistsReducer = (state: TodolistType[], action: ActionValue): TodolistType[] => {
+const initialTodolistState: TodolistType[] = [];
+
+export const todolistsReducer = (
+  state = initialTodolistState,
+  action: ActionValue
+): TodolistType[] => {
   switch (action.type) {
     case "REMOVE-TODOLIST": {
       return state.filter((tl) => tl.id !== action.payload.todolistId);
@@ -75,6 +80,7 @@ export const todolistsReducer = (state: TodolistType[], action: ActionValue): To
     }
 
     default:
-      throw new Error("I don't understand this type");
+      // throw new Error("I don't understand this type");
+      return state;
   }
 };

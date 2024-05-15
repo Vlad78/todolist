@@ -1,9 +1,11 @@
-import { v1 } from "uuid";
+import { v1 } from 'uuid';
 
-import { TasksStateType, TaskType } from "../App";
+import { TasksStateType } from '../AppRedux';
+
 
 type ActionValue =
   | ReturnType<typeof removeTaskAC>
+  | ReturnType<typeof removeAllTasksAC>
   | ReturnType<typeof addTaskAC>
   | ReturnType<typeof changeTaskStatusAC>
   | ReturnType<typeof changeTaskTitleAC>
@@ -15,6 +17,15 @@ export const removeTaskAC = (taskId: string, todolistId: string) => {
     type: "REMOVE-TASK",
     payload: {
       taskId,
+      todolistId,
+    },
+  } as const;
+};
+
+export const removeAllTasksAC = (todolistId: string) => {
+  return {
+    type: "REMOVE-ALL-TASKS",
+    payload: {
       todolistId,
     },
   } as const;
@@ -71,7 +82,9 @@ export const removeTodolistAC = (todolistId: string) => {
   } as const;
 };
 
-export const tasksReducer = (state: TasksStateType, action: ActionValue): TasksStateType => {
+const initialTasksState: TasksStateType = {};
+
+export const tasksReducer = (state = initialTasksState, action: ActionValue): TasksStateType => {
   switch (action.type) {
     case "REMOVE-TASK": {
       return {
@@ -81,13 +94,16 @@ export const tasksReducer = (state: TasksStateType, action: ActionValue): TasksS
         ),
       };
     }
+    case "REMOVE-ALL-TASKS": {
+      delete state[action.payload.todolistId];
+      return state;
+    }
     case "ADD-TASK": {
       const newTask = {
         id: v1(),
         title: action.payload.title,
         isDone: false,
       };
-
       return {
         ...state,
         [action.payload.todolistId]: [newTask, ...state[action.payload.todolistId]],
@@ -122,8 +138,7 @@ export const tasksReducer = (state: TasksStateType, action: ActionValue): TasksS
     }
 
     default:
-      throw new Error("I don't understand this type");
+      // throw new Error("I don't understand this type");
+      return state;
   }
 };
-
-console.log(typeof null === "object");
