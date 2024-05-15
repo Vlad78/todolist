@@ -1,14 +1,13 @@
-import { ChangeEvent, memo } from 'react';
-import { useDispatch } from 'react-redux';
+import { ChangeEvent, memo } from "react";
+import { useDispatch } from "react-redux";
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Checkbox, IconButton, ListItem } from '@mui/material';
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Checkbox, IconButton, ListItem } from "@mui/material";
 
-import { TodolistType } from './AppRedux';
-import { EditableSpan } from './EditableSpan';
-import { changeTaskStatusAC, changeTaskTitleAC, removeTaskAC } from './model/tasks-reducer';
-import { getListItemSx } from './Todolist.styles';
-
+import { TodolistType } from "./AppRedux";
+import { EditableSpan } from "./EditableSpan";
+import { changeTaskStatusAC, changeTaskTitleAC, removeTaskAC } from "./model/tasks-reducer";
+import { getListItemSx } from "./Todolist.styles";
 
 type TaskType = {
   task: {
@@ -32,7 +31,7 @@ export const Task = memo(({ task, todolist }: TaskType) => {
   };
 
   const changeTaskTitleHandler = (title: string) => {
-    dispatcher(changeTaskTitleAC(todolist.id, task.id, title));
+    dispatcher(changeTaskTitleAC(task.id, title, todolist.id));
   };
 
   return (

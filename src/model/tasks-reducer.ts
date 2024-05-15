@@ -1,7 +1,6 @@
-import { v1 } from 'uuid';
+import { v1 } from "uuid";
 
-import { TasksStateType } from '../AppRedux';
-
+import { TasksStateType } from "../AppRedux";
 
 type ActionValue =
   | ReturnType<typeof removeTaskAC>
