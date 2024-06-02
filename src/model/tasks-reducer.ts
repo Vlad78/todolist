@@ -1,6 +1,11 @@
-import { v1 } from "uuid";
+import { Dispatch } from 'redux';
+import { v1 } from 'uuid';
 
-import { TasksStateType } from "../AppRedux";
+import { todolistApi } from '../api/api';
+import { TaskModel, TasksStateType, TaskType } from '../AppRedux';
+import { AppRootStateType } from '../redux/store';
+import { setTodolistsAC } from './todolists-reducer';
+
 
 type ActionValue =
   | ReturnType<typeof removeTaskAC>
@@ -9,9 +14,11 @@ type ActionValue =
   | ReturnType<typeof changeTaskStatusAC>
   | ReturnType<typeof changeTaskTitleAC>
   | ReturnType<typeof addTodolistAC>
-  | ReturnType<typeof removeTodolistAC>;
+  | ReturnType<typeof removeTodolistAC>
+  | ReturnType<typeof setTodolistsAC>
+  | ReturnType<typeof setTasksAC>;
 
-export const removeTaskAC = (taskId: string, todolistId: string) => {
+export const removeTaskAC = (todolistId: string, taskId: string) => {
   return {
     type: "REMOVE-TASK",
     payload: {
@@ -30,17 +37,16 @@ export const removeAllTasksAC = (todolistId: string) => {
   } as const;
 };
 
-export const addTaskAC = (title: string, todolistId: string) => {
+export const addTaskAC = (task: TaskType) => {
   return {
     type: "ADD-TASK",
     payload: {
-      title,
-      todolistId,
+      task,
     },
   } as const;
 };
 
-export const changeTaskStatusAC = (taskId: string, isDone: boolean, todolistId: string) => {
+export const changeTaskStatusAC = (todolistId: string, taskId: string, isDone: boolean) => {
   return {
     type: "CHANGE-STATUS-TASK",
     payload: {
@@ -51,7 +57,7 @@ export const changeTaskStatusAC = (taskId: string, isDone: boolean, todolistId: 
   } as const;
 };
 
-export const changeTaskTitleAC = (taskId: string, title: string, todolistId: string) => {
+export const changeTaskTitleAC = (todolistId: string, taskId: string, title: string) => {
   return {
     type: "CHANGE-TITLE-TASK",
     payload: {
@@ -81,6 +87,74 @@ export const removeTodolistAC = (todolistId: string) => {
   } as const;
 };
 
+export const setTasksAC = (todolistId: string, tasks: TaskType[]) => {
+  return {
+    type: "SET-TASKS",
+    paylod: {
+      todolistId,
+      tasks,
+    },
+  } as const;
+};
+
+//                 Thunks
+
+export const getTasksThunk = (todolistId: string) => (dispatch: Dispatch) => {
+  todolistApi.getTasks(todolistId).then((res) => {
+    return dispatch(setTasksAC(todolistId, res.data.items));
+  });
+};
+
+export const addTaskThunk = (todolistId: string, title: string) => (dispatch: Dispatch) => {
+  todolistApi.addTask(todolistId, title).then((res) => {
+    dispatch(addTaskAC({ ...res.data.data.item, isDone: false }));
+  });
+};
+
+export const removeTaskThunk = (todolistId: string, taskId: string) => (dispatch: Dispatch) => {
+  todolistApi
+    .removeTask(todolistId, taskId)
+    .then((res) => res.status === 200 && dispatch(removeTaskAC(todolistId, taskId)));
+};
+
+type UpdateTaskDataType = { type: "check" | "title"; value: boolean | string };
+
+export const updateTaskThunk =
+  (todolistId: string, taskId: string, data: UpdateTaskDataType) =>
+  (dispatch: Dispatch, getState: () => AppRootStateType) => {
+    const tasksForCurrentTodolist = getState().tasks[todolistId];
+    const task = tasksForCurrentTodolist.find((t) => t.id === taskId);
+
+    if (!task) return;
+
+    const updatedModel: TaskModel = {
+      title: data.type === "title" && typeof data.value === "string" ? data.value : task.title,
+      completed:
+        data.type === "check" && typeof data.value === "boolean" ? data.value : task.completed,
+      startDate: task!.startDate,
+      priority: task!.priority,
+      description: task!.description,
+      deadline: task!.deadline,
+      status: task!.status,
+    };
+
+    try {
+      todolistApi.updateTask(todolistId, taskId, updatedModel).then((res) => {
+        if (data.type === "check" && res.status === 200) {
+          dispatch(changeTaskStatusAC(todolistId, taskId, updatedModel.completed));
+        } else if (data.type === "title" && res.status === 200) {
+          dispatch(changeTaskTitleAC(todolistId, taskId, updatedModel.title));
+        } else {
+          throw new Error("Server returned error: " + res.statusText);
+        }
+      });
+    } catch (error) {
+      console.error("Failed to update task:", error);
+    }
+  };
+
+//                  Reducer
+
 const initialTasksState: TasksStateType = {};
 
 export const tasksReducer = (state = initialTasksState, action: ActionValue): TasksStateType => {
@@ -98,14 +172,12 @@ export const tasksReducer = (state = initialTasksState, action: ActionValue): Ta
       return state;
     }
     case "ADD-TASK": {
-      const newTask = {
-        id: v1(),
-        title: action.payload.title,
-        isDone: false,
-      };
       return {
         ...state,
-        [action.payload.todolistId]: [newTask, ...state[action.payload.todolistId]],
+        [action.payload.task.todoListId!]: [
+          action.payload.task,
+          ...state[action.payload.task.todoListId!],
+        ],
       };
     }
     case "CHANGE-STATUS-TASK": {
@@ -134,6 +206,17 @@ export const tasksReducer = (state = initialTasksState, action: ActionValue): Ta
       const newState = { ...state };
       delete newState[action.payload.todolistId];
       return newState;
+    }
+    case "SET-TODOLISTS": {
+      return action.payload.todolists.reduce((pr, cur) => {
+        return { ...pr, [cur.id]: [] };
+      }, {});
+    }
+    case "SET-TASKS": {
+      return {
+        ...state,
+        [action.paylod.todolistId]: action.paylod.tasks,
+      };
     }
 
     default:

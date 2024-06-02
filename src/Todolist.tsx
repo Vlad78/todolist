@@ -1,4 +1,4 @@
-import { ChangeEvent, memo, MouseEventHandler, useCallback } from 'react';
+import { ChangeEvent, memo, MouseEventHandler, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,10 +10,11 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 
 import { AddItemForm } from './AddItemForm';
-import { FilterValuesType, TasksStateType, TaskType, TodolistType } from './AppRedux';
+import { FilterValuesType, TaskType, TodolistType } from './AppRedux';
 import { EditableSpan } from './EditableSpan';
-import { addTaskAC } from './model/tasks-reducer';
+import { addTaskThunk, getTasksThunk } from './model/tasks-reducer';
 import { MyButton } from './MyButton';
+import { useAppDispatch } from './redux/hooks';
 import { AppRootStateType } from './redux/store';
 import { Task } from './Task';
 import { filterButtonsContainerSx } from './Todolist.styles';
@@ -29,7 +30,7 @@ type PropsType = {
 export const Todolist = memo(
   ({ todolist, removeTodolist, updateTodolist, changeFilter }: PropsType) => {
     const tasks = useSelector<AppRootStateType, TaskType[]>((state) => state.tasks[todolist.id]);
-    const dispatcher = useDispatch();
+    const dispatcher = useAppDispatch();
 
     const onClickAllHandler: MouseEventHandler<HTMLButtonElement> = useCallback(
       (e) => {
@@ -66,13 +67,17 @@ export const Todolist = memo(
 
     const addTaskCallback = useCallback(
       (title: string) => {
-        dispatcher(addTaskAC(title, todolist.id));
+        dispatcher(addTaskThunk(todolist.id, title));
       },
       [dispatcher]
     );
 
+    useEffect(() => {
+      dispatcher(getTasksThunk(todolist.id));
+    }, [dispatcher, todolist.id]);
+
     const allTodolistTasks = tasks;
-    let filteredTasks = allTodolistTasks;
+    let filteredTasks = allTodolistTasks || [];
 
     if (todolist.filter === "active") {
       filteredTasks = allTodolistTasks.filter((task) => !task.isDone);
