@@ -18,9 +18,13 @@ import Grid from '@mui/material/Unstable_Grid2';
 
 import { AddItemForm } from './AddItemForm';
 import { MenuButton } from './MenuButton';
+<<<<<<< HEAD
 import {
     addTodolistThunk, getTodosThunk, removeTodolistThunk, updateTodolistThunk
 } from './model/todolists-reducer';
+=======
+import { addTodolistThunk, getTodosThunk, removeTodolistThunk } from './model/todolists-reducer';
+>>>>>>> 88fd670a49bf8405aab60c08983c413d071e1f71
 import { useAppDispatch } from './redux/hooks';
 import { AppDispatchType, AppRootStateType } from './redux/store';
 import { Todolist } from './Todolist';
@@ -85,6 +89,10 @@ function App() {
   const removeTodolist = useCallback(
     (todolistId: string) => {
       dispatcher(removeTodolistThunk(todolistId));
+<<<<<<< HEAD
+=======
+      // dispatcher({ type: "REMOVE-TODOLIST", payload: { todolistId } });
+>>>>>>> 88fd670a49bf8405aab60c08983c413d071e1f71
     },
     [dispatcher]
   );
@@ -92,6 +100,11 @@ function App() {
   const addTodolist = useCallback(
     (title: string) => {
       dispatcher(addTodolistThunk(title));
+<<<<<<< HEAD
+=======
+      // const todolistId = v1();
+      // dispatcher({ type: "ADD-TODOLIST", payload: { title, todolistId } });
+>>>>>>> 88fd670a49bf8405aab60c08983c413d071e1f71
     },
     [dispatcher]
   );
