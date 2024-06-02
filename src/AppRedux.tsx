@@ -1,5 +1,6 @@
 import './App.css';
 
+import { AxiosResponse } from 'axios';
 import { useCallback, useEffect, useLayoutEffect, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { v1 } from 'uuid';
@@ -17,22 +18,34 @@ import Grid from '@mui/material/Unstable_Grid2';
 
 import { AddItemForm } from './AddItemForm';
 import { MenuButton } from './MenuButton';
-import {
-    addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC, tasksReducer
-} from './model/tasks-reducer';
-import { AppRootStateType } from './redux/store';
+import { addTodolistThunk, getTodosThunk, removeTodolistThunk } from './model/todolists-reducer';
+import { useAppDispatch } from './redux/hooks';
+import { AppDispatchType, AppRootStateType } from './redux/store';
 import { Todolist } from './Todolist';
 
 
-export type TaskType = {
+export type TaskModel = {
+  title: string;
+  description: string;
+  completed: boolean;
+  status: number;
+  priority: number;
+  startDate: Date;
+  deadline: Date;
+};
+
+export type TaskType = TaskModel & {
   id: string;
   title: string;
   isDone: boolean;
+  todoListId?: string;
 };
 
 export type FilterValuesType = "all" | "active" | "completed";
 
 export type TodolistType = {
+  addedDate?: string;
+  order?: number;
   id: string;
   title: string;
   filter: FilterValuesType;
@@ -47,7 +60,7 @@ type ThemeMode = "dark" | "light";
 function App() {
   const todolists = useSelector<AppRootStateType, TodolistType[]>((state) => state.todolists);
 
-  const dispatcher = useDispatch();
+  const dispatcher = useAppDispatch();
 
   const [themeMode, setThemeMode] = useState<ThemeMode>("light");
 
@@ -69,15 +82,17 @@ function App() {
 
   const removeTodolist = useCallback(
     (todolistId: string) => {
-      dispatcher({ type: "REMOVE-TODOLIST", payload: { todolistId } });
+      dispatcher(removeTodolistThunk(todolistId));
+      // dispatcher({ type: "REMOVE-TODOLIST", payload: { todolistId } });
     },
     [dispatcher]
   );
 
   const addTodolist = useCallback(
     (title: string) => {
-      const todolistId = v1();
-      dispatcher({ type: "ADD-TODOLIST", payload: { title, todolistId } });
+      dispatcher(addTodolistThunk(title));
+      // const todolistId = v1();
+      // dispatcher({ type: "ADD-TODOLIST", payload: { title, todolistId } });
     },
     [dispatcher]
   );
@@ -90,8 +105,12 @@ function App() {
   );
 
   const changeModeHandler = () => {
-    setThemeMode(themeMode == "light" ? "dark" : "light");
+    setThemeMode(themeMode === "light" ? "dark" : "light");
   };
+
+  useEffect(() => {
+    dispatcher(getTodosThunk());
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>

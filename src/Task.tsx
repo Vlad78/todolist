@@ -1,15 +1,16 @@
-import { ChangeEvent, memo } from "react";
-import { useDispatch } from "react-redux";
+import { ChangeEvent, memo } from 'react';
 
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Checkbox, IconButton, ListItem } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Checkbox, IconButton, ListItem } from '@mui/material';
 
-import { TodolistType } from "./AppRedux";
-import { EditableSpan } from "./EditableSpan";
-import { changeTaskStatusAC, changeTaskTitleAC, removeTaskAC } from "./model/tasks-reducer";
-import { getListItemSx } from "./Todolist.styles";
+import { TodolistType } from './AppRedux';
+import { EditableSpan } from './EditableSpan';
+import { removeTaskThunk, updateTaskThunk } from './model/tasks-reducer';
+import { useAppDispatch } from './redux/hooks';
+import { getListItemSx } from './Todolist.styles';
 
-type TaskType = {
+
+type ComponentTaskType = {
   task: {
     id: string;
     isDone: boolean;
@@ -18,20 +19,21 @@ type TaskType = {
   todolist: TodolistType;
 };
 
-export const Task = memo(({ task, todolist }: TaskType) => {
-  const dispatcher = useDispatch();
+export const Task = memo(({ task, todolist }: ComponentTaskType) => {
+  const dispatcher = useAppDispatch();
 
   const removeTaskHandler = () => {
-    dispatcher(removeTaskAC(task.id, todolist.id));
+    dispatcher(removeTaskThunk(todolist.id, task.id));
   };
 
   const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    const newStatusValue = e.currentTarget.checked;
-    dispatcher(changeTaskStatusAC(task.id, newStatusValue, todolist.id));
+    dispatcher(
+      updateTaskThunk(todolist.id, task.id, { type: "check", value: e.currentTarget.checked })
+    );
   };
 
   const changeTaskTitleHandler = (title: string) => {
-    dispatcher(changeTaskTitleAC(task.id, title, todolist.id));
+    dispatcher(updateTaskThunk(todolist.id, task.id, { type: "title", value: title }));
   };
 
   return (

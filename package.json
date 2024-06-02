@@ -15,11 +15,13 @@
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.8",
+    "axios": "^1.7.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.1.1",
     "react-scripts": "5.0.1",
     "redux": "^5.0.1",
+    "redux-thunk": "^3.1.0",
     "typescript": "^5.3.3",
     "uuid": "^9.0.1",
     "web-vitals": "^3.5.1"
@@ -29,11 +31,11 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 9009",
     "build-storybook": "storybook build",
     "jest:integration": "jest -c integration/jest.config.js",
     "update:integration": "jest -c integration/jest.config.js --updateSnapshot",
-    "test:integration": "start-server-and-test storybook http-get://localhost:6006 jest:integration"
+    "test:integration": "start-server-and-test storybook http-get://localhost:9009 jest:integration"
   },
   "eslintConfig": {
     "extends": [
