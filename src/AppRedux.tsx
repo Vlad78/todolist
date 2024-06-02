@@ -26,6 +26,10 @@ import { AppDispatchType, AppRootStateType } from './redux/store';
 import { Todolist } from './Todolist';
 
 
+<<<<<<< HEAD
+=======
+import { addTodolistThunk, getTodosThunk, removeTodolistThunk } from './model/todolists-reducer';
+>>>>>>> 88fd670a49bf8405aab60c08983c413d071e1f71
 export type TaskModel = {
   title: string;
   description: string;
@@ -85,6 +89,10 @@ function App() {
   const removeTodolist = useCallback(
     (todolistId: string) => {
       dispatcher(removeTodolistThunk(todolistId));
+<<<<<<< HEAD
+=======
+      // dispatcher({ type: "REMOVE-TODOLIST", payload: { todolistId } });
+>>>>>>> 88fd670a49bf8405aab60c08983c413d071e1f71
     },
     [dispatcher]
   );
