@@ -12,10 +12,6 @@ export class CustomPromise<T> {
   private value: T | null = null;
   private reason: any = null;
 
-  // static a() {
-  //   console.log(1);
-  // }
-
   constructor(executor: Initializer<T>) {
     this.resolve = this.resolve.bind(this);
     this.reject = this.reject.bind(this);

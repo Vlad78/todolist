@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-import { TaskModel } from '../AppRedux';
+import { TaskModel, TaskType } from '../AppRedux';
+import { LoginType } from '../features/login/Login';
 
 
 const instance = axios.create({
@@ -13,6 +14,18 @@ const instance = axios.create({
   },
   baseURL: "https://social-network.samuraijs.com/api/1.1",
 });
+
+export const authApi = {
+  login(data: LoginType) {
+    return instance.post<ResponseType<UserType>>("auth/login", data);
+  },
+  logout() {
+    return instance.delete<ResponseType>("auth/login");
+  },
+  me() {
+    return instance.get<ResponseType<UserType>>("auth/me");
+  },
+};
 
 export const todolistApi = {
   getTodolists: () => {
@@ -36,11 +49,17 @@ export const todolistApi = {
     });
   },
   removeTask: (todolistId: string, taskId: string) => {
-    return instance.delete(`/todo-lists/${todolistId}/tasks/${taskId}`);
+    return instance.delete<ResponseType>(`/todo-lists/${todolistId}/tasks/${taskId}`);
   },
   updateTask: (todolistId: string, taskId: string, model: TaskModel) => {
-    return instance.put(`/todo-lists/${todolistId}/tasks/${taskId}`, model);
+    return instance.put<ResponseType>(`/todo-lists/${todolistId}/tasks/${taskId}`, model);
   },
+};
+
+export type UserType = {
+  id: number;
+  email: string;
+  login: string;
 };
 
 export type ApiTodolistType = {
@@ -64,7 +83,7 @@ export type ApiTaskType = {
   addedDate: Date;
 };
 
-type ResponseType<D = {}> = {
+export type ResponseType<D = {}> = {
   resultCode: number;
   messages: string[];
   fieldsErrors: FieldErrorType[];
@@ -75,3 +94,9 @@ type FieldErrorType = {
   error: string;
   field: string;
 };
+
+export enum STATUS_CODE {
+  SUCCESS = 0,
+  ERROR = 1,
+  RECAPTCHA_ERROR = 10,
+}

@@ -1,11 +1,12 @@
-import { Dispatch } from 'redux';
-import { v1 } from 'uuid';
+import { Dispatch } from "redux";
+import { v1 } from "uuid";
 
-import { todolistApi } from '../api/api';
-import { TaskModel, TasksStateType, TaskType } from '../AppRedux';
-import { AppRootStateType } from '../redux/store';
-import { setTodolistsAC } from './todolists-reducer';
-
+import { STATUS_CODE, todolistApi } from "../api/api";
+import { TaskModel, TasksStateType, TaskType } from "../AppRedux";
+import { AppRootStateType } from "../redux/store";
+import { handleServerAppError } from "../utils/error-utils";
+import { setErrorAC, setStatusAC } from "./app-reducer";
+import { setTodolistsAC } from "./todolists-reducer";
 
 type ActionValue =
   | ReturnType<typeof removeTaskAC>
@@ -100,21 +101,41 @@ export const setTasksAC = (todolistId: string, tasks: TaskType[]) => {
 //                 Thunks
 
 export const getTasksThunk = (todolistId: string) => (dispatch: Dispatch) => {
+  // dispatch(setStatusAC("loading"));
   todolistApi.getTasks(todolistId).then((res) => {
-    return dispatch(setTasksAC(todolistId, res.data.items));
+    dispatch(setTasksAC(todolistId, res.data.items));
+    dispatch(setStatusAC("succeeded"));
   });
 };
 
 export const addTaskThunk = (todolistId: string, title: string) => (dispatch: Dispatch) => {
+  dispatch(setStatusAC("loading"));
   todolistApi.addTask(todolistId, title).then((res) => {
-    dispatch(addTaskAC({ ...res.data.data.item, isDone: false }));
+    if (res.data.resultCode === STATUS_CODE.SUCCESS) {
+      dispatch(addTaskAC({ ...res.data.data.item, isDone: false }));
+      dispatch(setStatusAC("succeeded"));
+    } else {
+      handleServerAppError(res.data, dispatch);
+      // if (res.data.messages.length > 0) {
+      //   dispatch(setErrorAC(res.data.messages[0]));
+      // } else {
+      //   dispatch(setErrorAC("Someting went wrong"));
+      // }
+      // dispatch(setStatusAC("failed"));
+    }
   });
 };
 
 export const removeTaskThunk = (todolistId: string, taskId: string) => (dispatch: Dispatch) => {
-  todolistApi
-    .removeTask(todolistId, taskId)
-    .then((res) => res.status === 200 && dispatch(removeTaskAC(todolistId, taskId)));
+  dispatch(setStatusAC("loading"));
+  todolistApi.removeTask(todolistId, taskId).then((res) => {
+    if (res.status === 200) {
+      dispatch(removeTaskAC(todolistId, taskId));
+      dispatch(setStatusAC("succeeded"));
+    } else if (res.status >= 400 && res.status <= 499) {
+      dispatch(setErrorAC(res.statusText));
+    }
+  });
 };
 
 type UpdateTaskDataType = { type: "check" | "title"; value: boolean | string };

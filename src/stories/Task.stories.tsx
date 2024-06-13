@@ -1,9 +1,10 @@
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
 
-import { TaskType } from "../AppRedux";
-import { AppRootStateType } from "../redux/store";
-import { Task } from "../Task";
-import ReduxStoreProviderDecorator from "./ReduxStoreProviderDecorator";
+import { TaskType } from '../AppRedux';
+import { AppRootStateType } from '../redux/store';
+import { Task } from '../Task';
+import ReduxStoreProviderDecorator from './ReduxStoreProviderDecorator';
+
 
 import type { Meta, StoryObj } from "@storybook/react";
 const meta: Meta<typeof Task> = {
@@ -29,7 +30,10 @@ const TaskWrapper = () => {
   if (task === undefined) return "No tasks left. Reload the page.";
 
   return (
-    <Task task={task} todolist={{ id: "todolistId1", title: "What to learn", filter: "all" }} />
+    <Task
+      task={task}
+      todolist={{ id: "todolistId1", title: "What to learn", filter: "all", entityStatus: "idle" }}
+    />
   );
 };
 

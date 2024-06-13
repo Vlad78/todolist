@@ -1,24 +1,23 @@
-import { ChangeEvent, memo, MouseEventHandler, useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { memo, MouseEventHandler, useCallback, useEffect } from "react";
+import { useSelector } from "react-redux";
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
+import DeleteIcon from "@mui/icons-material/Delete";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 
-import { AddItemForm } from './AddItemForm';
-import { FilterValuesType, TaskType, TodolistType } from './AppRedux';
-import { EditableSpan } from './EditableSpan';
-import { addTaskThunk, getTasksThunk } from './model/tasks-reducer';
-import { MyButton } from './MyButton';
-import { useAppDispatch } from './redux/hooks';
-import { AppRootStateType } from './redux/store';
-import { Task } from './Task';
-import { filterButtonsContainerSx } from './Todolist.styles';
-
+import { AddItemForm } from "./AddItemForm";
+import { FilterValuesType, TaskType, TodolistType } from "./AppRedux";
+import { EditableSpan } from "./EditableSpan";
+import { addTaskThunk, getTasksThunk } from "./model/tasks-reducer";
+import { MyButton } from "./MyButton";
+import { useAppDispatch, useAppSelector } from "./redux/hooks";
+import { AppRootStateType } from "./redux/store";
+import { Task } from "./Task";
+import { filterButtonsContainerSx } from "./Todolist.styles";
 
 type PropsType = {
   todolist: TodolistType;
@@ -30,6 +29,7 @@ type PropsType = {
 export const Todolist = memo(
   ({ todolist, removeTodolist, updateTodolist, changeFilter }: PropsType) => {
     const tasks = useSelector<AppRootStateType, TaskType[]>((state) => state.tasks[todolist.id]);
+    const status = useAppSelector((state) => state.app.status);
     const dispatcher = useAppDispatch();
 
     const onClickAllHandler: MouseEventHandler<HTMLButtonElement> = useCallback(
@@ -93,11 +93,14 @@ export const Todolist = memo(
           <h3>
             <EditableSpan value={todolist.title} onChange={updateTodolistHandler} />
           </h3>
-          <IconButton onClick={removeTodolistHandler}>
+          <IconButton
+            onClick={removeTodolistHandler}
+            disabled={todolist.entityStatus === "loading"}
+          >
             <DeleteIcon />
           </IconButton>
         </div>
-        <AddItemForm addItem={addTaskCallback} />
+        <AddItemForm addItem={addTaskCallback} disabled={status === "loading"} />
         {filteredTasks.length === 0 ? (
           <p>Тасок нет</p>
         ) : (

@@ -1,18 +1,47 @@
-import './index.css';
+import "./index.css";
 
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { Provider } from 'react-redux';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 
-import App from './AppRedux';
-import { store } from './redux/store';
+import App from "./AppRedux";
+import ErrorPage from "./components/ErrorPage";
+import TodolistsList from "./components/Todolists";
+import { Login } from "./features/login/Login";
+import { store } from "./redux/store";
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    errorElement: <Navigate to={"/404"} />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to={"/todolists"} />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/todolists",
+        element: <TodolistsList />,
+      },
+      {
+        path: "/404",
+        element: <ErrorPage />,
+      },
+    ],
+  },
+]);
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
   // <React.StrictMode>
   <Provider store={store}>
-    <App />
+    <RouterProvider router={router} />
   </Provider>
   // </React.StrictMode>
 );

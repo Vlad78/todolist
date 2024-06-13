@@ -1,35 +1,25 @@
 import './App.css';
 
-import { AxiosResponse } from 'axios';
-import { useCallback, useEffect, useLayoutEffect, useReducer, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { v1 } from 'uuid';
+import { useEffect, useState } from 'react';
+import { Outlet } from 'react-router-dom';
 
 import MenuIcon from '@mui/icons-material/Menu';
+import { LinearProgress } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import IconButton from '@mui/material/IconButton';
-import Paper from '@mui/material/Paper';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Toolbar from '@mui/material/Toolbar';
-import Grid from '@mui/material/Unstable_Grid2';
 
-import { AddItemForm } from './AddItemForm';
+import { CustomizedSnackbars } from './components/ErrorSnapbar';
+import { meTC } from './features/login/auth-reducer';
 import { MenuButton } from './MenuButton';
-import {
-    addTodolistThunk, getTodosThunk, removeTodolistThunk, updateTodolistThunk
-} from './model/todolists-reducer';
-import { useAppDispatch } from './redux/hooks';
-import { AppDispatchType, AppRootStateType } from './redux/store';
-import { Todolist } from './Todolist';
+import { RequestStatusType } from './model/app-reducer';
+import { useAppDispatch, useAppSelector } from './redux/hooks';
 
 
-<<<<<<< HEAD
-=======
-import { addTodolistThunk, getTodosThunk, removeTodolistThunk } from './model/todolists-reducer';
->>>>>>> 88fd670a49bf8405aab60c08983c413d071e1f71
 export type TaskModel = {
   title: string;
   description: string;
@@ -55,6 +45,7 @@ export type TodolistType = {
   id: string;
   title: string;
   filter: FilterValuesType;
+  entityStatus: RequestStatusType;
 };
 
 export type TasksStateType = {
@@ -64,9 +55,11 @@ export type TasksStateType = {
 type ThemeMode = "dark" | "light";
 
 function App() {
-  const todolists = useSelector<AppRootStateType, TodolistType[]>((state) => state.todolists);
+  const isInitialized = useAppSelector((state) => state.app.isInitialized);
+  const status = useAppSelector((state) => state.app.status);
+  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
 
-  const dispatcher = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   const [themeMode, setThemeMode] = useState<ThemeMode>("light");
 
@@ -79,44 +72,12 @@ function App() {
     },
   });
 
-  const changeFilter = useCallback(
-    (filter: FilterValuesType, todolistId: string) => {
-      dispatcher({ type: "CHANGE-TODOLIST-FILTER", payload: { filter, todolistId } });
-    },
-    [dispatcher]
-  );
-
-  const removeTodolist = useCallback(
-    (todolistId: string) => {
-      dispatcher(removeTodolistThunk(todolistId));
-<<<<<<< HEAD
-=======
-      // dispatcher({ type: "REMOVE-TODOLIST", payload: { todolistId } });
->>>>>>> 88fd670a49bf8405aab60c08983c413d071e1f71
-    },
-    [dispatcher]
-  );
-
-  const addTodolist = useCallback(
-    (title: string) => {
-      dispatcher(addTodolistThunk(title));
-    },
-    [dispatcher]
-  );
-
-  const updateTodolist = useCallback(
-    (todolistId: string, title: string) => {
-      dispatcher(updateTodolistThunk(todolistId, title));
-    },
-    [dispatcher]
-  );
-
   const changeModeHandler = () => {
     setThemeMode(themeMode === "light" ? "dark" : "light");
   };
 
   useEffect(() => {
-    dispatcher(getTodosThunk());
+    dispatch(meTC());
   }, []);
 
   return (
@@ -128,35 +89,16 @@ function App() {
             <MenuIcon />
           </IconButton>
           <div>
-            <MenuButton>Login</MenuButton>
-            <MenuButton>Logout</MenuButton>
+            {!isLoggedIn && isInitialized && <MenuButton>Login</MenuButton>}
+            {isLoggedIn && isInitialized && <MenuButton>Logout</MenuButton>}
             <MenuButton background={theme.palette.primary.dark}>Faq</MenuButton>
             <Switch color={"default"} onChange={changeModeHandler} />
           </div>
         </Toolbar>
+        {status === "loading" ? <LinearProgress /> : ""}
       </AppBar>
-      <Container fixed>
-        <Grid container sx={{ mb: "30px" }}>
-          <AddItemForm addItem={addTodolist} />
-        </Grid>
-
-        <Grid container spacing={4}>
-          {todolists.map((tl) => {
-            return (
-              <Grid key={tl.id}>
-                <Paper sx={{ p: "0 20px 20px 20px" }}>
-                  <Todolist
-                    todolist={tl}
-                    changeFilter={changeFilter}
-                    removeTodolist={removeTodolist}
-                    updateTodolist={updateTodolist}
-                  />
-                </Paper>
-              </Grid>
-            );
-          })}
-        </Grid>
-      </Container>
+      <Container fixed>{isInitialized && <Outlet />}</Container>
+      <CustomizedSnackbars />
     </ThemeProvider>
   );
 }
