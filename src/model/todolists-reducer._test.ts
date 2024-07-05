@@ -1,10 +1,10 @@
-import { v1 } from 'uuid';
+import { v1 } from "uuid"
 
-import { TodolistType } from '../AppRedux';
-import {
-    addTodolistAC, changeFilterAC, removeTodolistAC, todolistsReducer
-} from './todolists-reducer';
+import { TodolistType } from "../app/AppRedux"
 
+// import {
+//     addTodolistAC, changeFilterAC, removeTodolistAC, todolistsReducer
+// } from './todolists-reducer';
 
 // test("correct todolist should be removed", () => {
 //   let todolistId1 = v1();

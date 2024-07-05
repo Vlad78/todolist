@@ -1,16 +1,15 @@
-import * as React from 'react';
+import * as React from "react"
 
-import Alert from '@mui/material/Alert';
-import Button from '@mui/material/Button';
-import Snackbar from '@mui/material/Snackbar';
+import Alert from "@mui/material/Alert"
+import Button from "@mui/material/Button"
+import Snackbar from "@mui/material/Snackbar"
 
-import { setErrorAC } from '../model/app-reducer';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
-
+import { useAppDispatch, useAppSelector } from "../common/hooks"
+import { appActions } from "../model/app-reducer"
 
 export const CustomizedSnackbars = () => {
-  const error = useAppSelector((state) => state.app.error);
-  const dispatch = useAppDispatch();
+  const error = useAppSelector((state) => state.app.error)
+  const dispatch = useAppDispatch()
 
   //   const handleClick = () => {
   //     setOpen(true);
@@ -18,11 +17,12 @@ export const CustomizedSnackbars = () => {
 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === "clickaway") {
-      return;
+      return
     }
 
-    dispatch(setErrorAC(null));
-  };
+    // dispatch(setErrorAC(null));
+    dispatch(appActions.setAppError({ error: null }))
+  }
 
   return (
     <div>
@@ -33,5 +33,5 @@ export const CustomizedSnackbars = () => {
         </Alert>
       </Snackbar>
     </div>
-  );
-};
+  )
+}

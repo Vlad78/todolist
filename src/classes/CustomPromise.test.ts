@@ -1,4 +1,5 @@
-import { CustomPromise } from "./CustomPromise";
+import { CustomPromise } from './CustomPromise';
+
 
 const sleepRes = (ms: number) => {
   return new CustomPromise((res, rej) => {
@@ -42,7 +43,7 @@ describe("test custom promise", () => {
         })
         .then((res) => {
           console.log(res);
-          return res + " then3";
+          // return res + " then3";
         })
         .then((res) => {
           console.log(res);

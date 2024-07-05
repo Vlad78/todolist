@@ -1,58 +1,55 @@
-import { useCallback, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useCallback, useEffect } from "react"
+import { Navigate } from "react-router-dom"
 
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Unstable_Grid2';
+import Paper from "@mui/material/Paper"
+import Grid from "@mui/material/Unstable_Grid2"
 
-import { AddItemForm } from '../AddItemForm';
-import { FilterValuesType, TodolistType } from '../AppRedux';
-import {
-    addTodolistThunk, getTodosThunk, removeTodolistThunk, updateTodolistThunk
-} from '../model/todolists-reducer';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { Todolist } from '../Todolist';
-
+import { AddItemForm } from "../AddItemForm"
+import { FilterValuesType, TodolistType } from "../app/AppRedux"
+import { useAppDispatch, useAppSelector } from "../common/hooks"
+import { addTodolistThunk, getTodosThunk, removeTodolistThunk, updateTodolistThunk } from "../model/todolists-reducer"
+import { Todolist } from "../Todolist"
 
 const TodolistsList = () => {
-  const todolists = useAppSelector<TodolistType[]>((state) => state.todolists);
-  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
-  const dispatcher = useAppDispatch();
+  const todolists = useAppSelector<TodolistType[]>((state) => state.todolists)
+  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn)
+  const dispatcher = useAppDispatch()
 
   const addTodolist = useCallback(
     (title: string) => {
-      dispatcher(addTodolistThunk(title));
+      dispatcher(addTodolistThunk(title))
     },
-    [dispatcher]
-  );
+    [dispatcher],
+  )
 
   const changeFilter = useCallback(
     (filter: FilterValuesType, todolistId: string) => {
-      dispatcher({ type: "CHANGE-TODOLIST-FILTER", payload: { filter, todolistId } });
+      dispatcher({ type: "CHANGE-TODOLIST-FILTER", payload: { filter, todolistId } })
     },
-    [dispatcher]
-  );
+    [dispatcher],
+  )
 
   const removeTodolist = useCallback(
     (todolistId: string) => {
-      dispatcher(removeTodolistThunk(todolistId));
+      dispatcher(removeTodolistThunk(todolistId))
     },
-    [dispatcher]
-  );
+    [dispatcher],
+  )
 
   const updateTodolist = useCallback(
     (todolistId: string, title: string) => {
-      dispatcher(updateTodolistThunk(todolistId, title));
+      dispatcher(updateTodolistThunk(todolistId, title))
     },
-    [dispatcher]
-  );
+    [dispatcher],
+  )
 
   useEffect(() => {
     if (isLoggedIn) {
-      dispatcher(getTodosThunk());
+      dispatcher(getTodosThunk())
     }
-  }, [isLoggedIn, dispatcher]);
+  }, [isLoggedIn, dispatcher])
 
-  if (!isLoggedIn) return <Navigate to={"/todolists"} />;
+  if (!isLoggedIn) return <Navigate to={"/todolists"} />
 
   return (
     <>
@@ -73,10 +70,10 @@ const TodolistsList = () => {
                 />
               </Paper>
             </Grid>
-          );
+          )
         })}
       </Grid>
     </>
-  );
-};
-export default TodolistsList;
+  )
+}
+export default TodolistsList

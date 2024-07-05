@@ -1,15 +1,15 @@
-import "./index.css";
+import "./index.css"
 
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { Provider } from "react-redux";
-import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
+import React from "react"
+import ReactDOM from "react-dom/client"
+import { Provider } from "react-redux"
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom"
 
-import App from "./AppRedux";
-import ErrorPage from "./components/ErrorPage";
-import TodolistsList from "./components/Todolists";
-import { Login } from "./features/login/Login";
-import { store } from "./redux/store";
+import App from "./app/AppRedux"
+import { store } from "./app/store"
+import ErrorPage from "./components/ErrorPage"
+import TodolistsList from "./components/Todolists"
+import { Login } from "./features/login/ui/Login"
 
 const router = createBrowserRouter([
   {
@@ -35,16 +35,16 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+])
 
-const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 root.render(
   // <React.StrictMode>
   <Provider store={store}>
     <RouterProvider router={router} />
-  </Provider>
+  </Provider>,
   // </React.StrictMode>
-);
+)
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

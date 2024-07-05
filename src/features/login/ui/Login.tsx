@@ -1,33 +1,27 @@
-import { useFormik } from "formik";
-import React from "react";
-import { Navigate } from "react-router-dom";
+import { useFormik } from "formik"
+import React from "react"
+import { Navigate } from "react-router-dom"
 
-import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
-import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormGroup from "@mui/material/FormGroup";
-import FormLabel from "@mui/material/FormLabel";
-import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button"
+import Checkbox from "@mui/material/Checkbox"
+import FormControl from "@mui/material/FormControl"
+import FormControlLabel from "@mui/material/FormControlLabel"
+import FormGroup from "@mui/material/FormGroup"
+import FormLabel from "@mui/material/FormLabel"
+import Grid from "@mui/material/Grid"
+import TextField from "@mui/material/TextField"
 
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { loginTC } from "./auth-reducer";
+import { useAppDispatch, useAppSelector } from "../../../common/hooks"
+import { loginTC } from "../auth-reducer"
 
 type ErrorsType = {
-  email?: string;
-  password?: string;
-};
-
-export type LoginType = {
-  email: String;
-  password: String;
-  rememberMe: boolean;
-};
+  email?: string
+  password?: string
+}
 
 export const Login = () => {
-  const dispatch = useAppDispatch();
-  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn);
+  const dispatch = useAppDispatch()
+  const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn)
 
   const formik = useFormik({
     initialValues: {
@@ -36,27 +30,27 @@ export const Login = () => {
       rememberMe: false,
     },
     validate: (values) => {
-      const errors: ErrorsType = {};
+      const errors: ErrorsType = {}
 
       if (!values.email) {
-        errors.email = "Required";
+        errors.email = "Required"
       } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-        errors.email = "Invalid email address";
+        errors.email = "Invalid email address"
       }
       if (!values.password) {
-        errors.password = "Required";
+        errors.password = "Required"
       } else if (values.password.length < 4) {
-        errors.password = "The password must be at least 8 characters long";
+        errors.password = "The password must be at least 8 characters long"
       }
-      return errors;
+      return errors
     },
     onSubmit: (values) => {
-      console.log(JSON.stringify(values));
-      dispatch(loginTC(values));
+      console.log(JSON.stringify(values))
+      dispatch(loginTC(values))
     },
-  });
+  })
 
-  if (isLoggedIn) return <Navigate to={"/todolists"} />;
+  if (isLoggedIn) return <Navigate to={"/todolists"} />
 
   return (
     <Grid container justifyContent={"center"}>
@@ -85,9 +79,7 @@ export const Login = () => {
                 // onChange={formik.handleChange}
                 // value={formik.values.email}
               />
-              {formik.touched.email && formik.errors.email && (
-                <div style={{ color: "red" }}>{formik.errors.email}</div>
-              )}
+              {formik.touched.email && formik.errors.email && <div style={{ color: "red" }}>{formik.errors.email}</div>}
               <TextField
                 type="password"
                 label="Password"
@@ -118,5 +110,5 @@ export const Login = () => {
         </FormControl>
       </Grid>
     </Grid>
-  );
-};
+  )
+}

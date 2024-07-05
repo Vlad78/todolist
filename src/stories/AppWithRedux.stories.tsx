@@ -1,11 +1,11 @@
-import { Provider } from "react-redux";
+import { Provider } from "react-redux"
 
-import { fn } from "@storybook/test";
+import { fn } from "@storybook/test"
 
-import App from "../AppRedux";
-import { store } from "../redux/store";
+import App from "../app/AppRedux"
+import { store } from "../app/store"
 
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react"
 const meta: Meta<typeof App> = {
   title: "TODOLISTS/AppWithRedux",
   component: App,
@@ -15,10 +15,10 @@ const meta: Meta<typeof App> = {
   tags: ["autodocs"],
   argTypes: {},
   args: {},
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const AppRedux: Story = {
   render: () => {
@@ -26,6 +26,6 @@ export const AppRedux: Story = {
       <Provider store={store}>
         <App />
       </Provider>
-    );
+    )
   },
-};
+}

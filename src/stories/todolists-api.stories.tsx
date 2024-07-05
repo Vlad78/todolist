@@ -1,11 +1,11 @@
-import axios, { AxiosRequestConfig } from "axios";
-import { useEffect, useState } from "react";
+import axios, { AxiosRequestConfig } from "axios"
+import { useEffect, useState } from "react"
 
-import { todolistApi } from "../api/api";
+import { todolistApi } from "../features/todolist/api/api"
 
 export default {
   title: "API",
-};
+}
 
 const settings: AxiosRequestConfig<any> = {
   //   withCredentials: true,
@@ -16,64 +16,64 @@ const settings: AxiosRequestConfig<any> = {
     "API-KEY": "699ee4e8-5315-4be2-b131-5369858ba62a",
   },
   baseURL: "https://social-network.samuraijs.com/api/1.1",
-};
+}
 
 export const AuthMe = () => {
-  const [state, setState] = useState<any>(null);
+  const [state, setState] = useState<any>(null)
 
   useEffect(() => {
     axios
       .get("/auth/me", settings)
       .then((res) => {
-        setState(res.data);
+        setState(res.data)
       })
-      .catch((error) => console.log(error));
-  }, []);
+      .catch((error) => console.log(error))
+  }, [])
 
-  return <div>{JSON.stringify(state)}</div>;
-};
+  return <div>{JSON.stringify(state)}</div>
+}
 
 export const GetTodolists = () => {
-  const [state, setState] = useState<any>(null);
+  const [state, setState] = useState<any>(null)
   useEffect(() => {
-    todolistApi.getTodolists().then((res) => setState(res.data));
-  }, []);
-  return <div>{JSON.stringify(state)}</div>;
-};
+    todolistApi.getTodolists().then((res) => setState(res.data))
+  }, [])
+  return <div>{JSON.stringify(state)}</div>
+}
 
 export const CreateTodolist = () => {
-  const [state, setState] = useState<any>(null);
+  const [state, setState] = useState<any>(null)
 
   useEffect(() => {
     todolistApi
       .createTodolist("test")
       .then((res) => {
-        setState(res.data);
+        setState(res.data)
       })
-      .catch((error) => console.log(error));
-  }, []);
+      .catch((error) => console.log(error))
+  }, [])
 
-  return <div>{JSON.stringify(state)}</div>;
-};
+  return <div>{JSON.stringify(state)}</div>
+}
 
 export const DeleteTodolist = () => {
-  const [state, setState] = useState<any>(null);
+  const [state, setState] = useState<any>(null)
   useEffect(() => {
     todolistApi.deleteTodolist("999").then((res) => {
-      setState(res.data);
-    });
-  }, []);
+      setState(res.data)
+    })
+  }, [])
 
-  return <div>{JSON.stringify(state)}</div>;
-};
+  return <div>{JSON.stringify(state)}</div>
+}
 
 export const UpdateTodolistTitle = () => {
-  const [state, setState] = useState<any>(null);
+  const [state, setState] = useState<any>(null)
   useEffect(() => {
     todolistApi.updateTodolist("999", "updateTitle").then((res) => {
-      setState(res.data);
-    });
-  }, []);
+      setState(res.data)
+    })
+  }, [])
 
-  return <div>{JSON.stringify(state)}</div>;
-};
+  return <div>{JSON.stringify(state)}</div>
+}
