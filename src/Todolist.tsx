@@ -1,23 +1,24 @@
-import { memo, MouseEventHandler, useCallback, useEffect } from "react"
-import { useSelector } from "react-redux"
+import { memo, MouseEventHandler, useCallback, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
-import DeleteIcon from "@mui/icons-material/Delete"
-import Box from "@mui/material/Box"
-import Button from "@mui/material/Button"
-import Checkbox from "@mui/material/Checkbox"
-import IconButton from "@mui/material/IconButton"
-import List from "@mui/material/List"
-import ListItem from "@mui/material/ListItem"
+import DeleteIcon from '@mui/icons-material/Delete';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 
-import { AddItemForm } from "./AddItemForm"
-import { FilterValuesType, TaskType, TodolistType } from "./app/AppRedux"
-import { AppRootStateType } from "./app/store"
-import { useAppDispatch, useAppSelector } from "./common/hooks"
-import { EditableSpan } from "./EditableSpan"
-import { addTask, fetchTasks } from "./model/tasks-reducer"
-import { MyButton } from "./MyButton"
-import { Task } from "./Task"
-import { filterButtonsContainerSx } from "./Todolist.styles"
+import { AddItemForm } from './AddItemForm';
+import { FilterValuesType, TaskType, TodolistType } from './app/AppRedux';
+import { AppRootStateType } from './app/store';
+import { useAppDispatch, useAppSelector } from './common/hooks';
+import { EditableSpan } from './EditableSpan';
+import { addTask, fetchTasks } from './model/tasks-reducer';
+import { MyButton } from './MyButton';
+import { Task } from './Task';
+import { filterButtonsContainerSx } from './Todolist.styles';
+
 
 type PropsType = {
   todolist: TodolistType

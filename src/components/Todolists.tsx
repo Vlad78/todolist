@@ -1,51 +1,52 @@
-import { useCallback, useEffect } from "react"
-import { Navigate } from "react-router-dom"
+import { useCallback, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 
-import Paper from "@mui/material/Paper"
-import Grid from "@mui/material/Unstable_Grid2"
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Unstable_Grid2';
 
-import { AddItemForm } from "../AddItemForm"
-import { FilterValuesType, TodolistType } from "../app/AppRedux"
-import { useAppDispatch, useAppSelector } from "../common/hooks"
-import { addTodolistThunk, getTodosThunk, removeTodolistThunk, updateTodolistThunk } from "../model/todolists-reducer"
-import { Todolist } from "../Todolist"
+import { AddItemForm } from '../AddItemForm';
+import { FilterValuesType, TodolistType } from '../app/AppRedux';
+import { useAppDispatch, useAppSelector } from '../common/hooks';
+import { addTodolist, getTodos, removeTodolist, updateTodolist } from '../model/todolists-reducer';
+import { Todolist } from '../Todolist';
+
 
 const TodolistsList = () => {
   const todolists = useAppSelector<TodolistType[]>((state) => state.todolists)
   const isLoggedIn = useAppSelector((state) => state.auth.isLoggedIn)
   const dispatcher = useAppDispatch()
 
-  const addTodolist = useCallback(
+  const addTodolistHandler = useCallback(
     (title: string) => {
-      dispatcher(addTodolistThunk(title))
+      dispatcher(addTodolist({ title }))
     },
     [dispatcher],
   )
 
-  const changeFilter = useCallback(
+  const changeFilterHandler = useCallback(
     (filter: FilterValuesType, todolistId: string) => {
       dispatcher({ type: "CHANGE-TODOLIST-FILTER", payload: { filter, todolistId } })
     },
     [dispatcher],
   )
 
-  const removeTodolist = useCallback(
+  const removeTodolistHandler = useCallback(
     (todolistId: string) => {
-      dispatcher(removeTodolistThunk(todolistId))
+      dispatcher(removeTodolist({ todolistId }))
     },
     [dispatcher],
   )
 
-  const updateTodolist = useCallback(
+  const updateTodolistHandler = useCallback(
     (todolistId: string, title: string) => {
-      dispatcher(updateTodolistThunk(todolistId, title))
+      dispatcher(updateTodolist({ todolistId, title }))
     },
     [dispatcher],
   )
 
   useEffect(() => {
     if (isLoggedIn) {
-      dispatcher(getTodosThunk())
+      dispatcher(getTodos())
     }
   }, [isLoggedIn, dispatcher])
 
@@ -54,7 +55,7 @@ const TodolistsList = () => {
   return (
     <>
       <Grid container sx={{ mb: "30px" }}>
-        <AddItemForm addItem={addTodolist} />
+        <AddItemForm addItem={addTodolistHandler} />
       </Grid>
 
       <Grid container spacing={4}>
@@ -64,9 +65,9 @@ const TodolistsList = () => {
               <Paper sx={{ p: "0 20px 20px 20px" }}>
                 <Todolist
                   todolist={tl}
-                  changeFilter={changeFilter}
-                  removeTodolist={removeTodolist}
-                  updateTodolist={updateTodolist}
+                  changeFilter={changeFilterHandler}
+                  removeTodolist={removeTodolistHandler}
+                  updateTodolist={updateTodolistHandler}
                 />
               </Paper>
             </Grid>

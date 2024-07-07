@@ -1,18 +1,20 @@
-import { useFormik } from "formik"
-import React from "react"
-import { Navigate } from "react-router-dom"
+import { useFormik } from 'formik';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 
-import Button from "@mui/material/Button"
-import Checkbox from "@mui/material/Checkbox"
-import FormControl from "@mui/material/FormControl"
-import FormControlLabel from "@mui/material/FormControlLabel"
-import FormGroup from "@mui/material/FormGroup"
-import FormLabel from "@mui/material/FormLabel"
-import Grid from "@mui/material/Grid"
-import TextField from "@mui/material/TextField"
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import FormLabel from '@mui/material/FormLabel';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
 
-import { useAppDispatch, useAppSelector } from "../../../common/hooks"
-import { loginTC } from "../auth-reducer"
+import { useAppDispatch, useAppSelector } from '../../../common/hooks';
+import { BaseResponse } from '../../../common/types/common.types';
+import { login } from '../auth-reducer';
+
 
 type ErrorsType = {
   email?: string
@@ -44,9 +46,17 @@ export const Login = () => {
       }
       return errors
     },
-    onSubmit: (values) => {
+    onSubmit: async (values, formikHelpers) => {
       console.log(JSON.stringify(values))
-      dispatch(loginTC(values))
+
+      dispatch(login({ data: values }))
+        .unwrap()
+        .then()
+        .catch((res: BaseResponse) => {
+          res.fieldsErrors?.forEach((err) => {
+            formikHelpers.setFieldError(err.field, err.error)
+          })
+        })
     },
   })
 

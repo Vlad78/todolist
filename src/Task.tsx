@@ -1,13 +1,14 @@
-import { ChangeEvent, memo } from "react"
+import { ChangeEvent, memo } from 'react';
 
-import DeleteIcon from "@mui/icons-material/Delete"
-import { Checkbox, IconButton, ListItem } from "@mui/material"
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Checkbox, IconButton, ListItem } from '@mui/material';
 
-import { TodolistType } from "./app/AppRedux"
-import { useAppDispatch } from "./common/hooks"
-import { EditableSpan } from "./EditableSpan"
-import { removeTask, updateTask } from "./model/tasks-reducer"
-import { getListItemSx } from "./Todolist.styles"
+import { TodolistType } from './app/AppRedux';
+import { useAppDispatch } from './common/hooks';
+import { EditableSpan } from './EditableSpan';
+import { removeTask, updateTask } from './model/tasks-reducer';
+import { getListItemSx } from './Todolist.styles';
+
 
 type ComponentTaskType = {
   task: {
@@ -22,7 +23,6 @@ export const Task = memo(({ task, todolist }: ComponentTaskType) => {
   const dispatcher = useAppDispatch()
 
   const removeTaskHandler = () => {
-    // dispatcher(removeTaskThunk(todolist.id, task.id))
     dispatcher(removeTask({ todolistId: todolist.id, taskId: task.id }))
   }
 

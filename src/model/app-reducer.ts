@@ -1,5 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
+import { createAppAsyncThunk } from "../common/hooks"
+import { authApi } from "../features/login/api/authApi"
 
 export type RequestStatusType = "idle" | "loading" | "succeeded" | "failed"
 

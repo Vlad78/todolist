@@ -1,15 +1,18 @@
-import * as React from "react"
+import * as React from 'react';
 
-import Alert from "@mui/material/Alert"
-import Button from "@mui/material/Button"
-import Snackbar from "@mui/material/Snackbar"
+import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
 
-import { useAppDispatch, useAppSelector } from "../common/hooks"
-import { appActions } from "../model/app-reducer"
+import { useAppDispatch, useAppSelector } from '../common/hooks';
+import { appActions } from '../model/app-reducer';
+
 
 export const CustomizedSnackbars = () => {
   const error = useAppSelector((state) => state.app.error)
   const dispatch = useAppDispatch()
+
+  console.log(error)
 
   //   const handleClick = () => {
   //     setOpen(true);

@@ -1,13 +1,14 @@
-import { TypedUseSelectorHook } from "react-redux"
-import { AnyAction, applyMiddleware, combineReducers, legacy_createStore, UnknownAction } from "redux"
-import { thunk, ThunkAction, ThunkDispatch } from "redux-thunk"
+import { TypedUseSelectorHook } from 'react-redux';
+import { UnknownAction } from 'redux';
+import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-import { configureStore, createAsyncThunk } from "@reduxjs/toolkit"
+import { configureStore } from '@reduxjs/toolkit';
 
-import { authReducer } from "../features/login/auth-reducer"
-import { appReducer } from "../model/app-reducer"
-import { tasksReducer } from "../model/tasks-reducer"
-import { todolistsReducer } from "../model/todolists-reducer"
+import { authReducer } from '../features/login/auth-reducer';
+import { appReducer } from '../model/app-reducer';
+import { tasksReducer } from '../model/tasks-reducer';
+import { todolistsReducer } from '../model/todolists-reducer';
+
 
 export const store = configureStore({
   reducer: {
